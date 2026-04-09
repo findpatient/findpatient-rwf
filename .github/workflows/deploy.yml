@@ -1,1 +1,46 @@
+name: Deploy RWF FindPatient
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout org repo
+        uses: actions/checkout@v4
+
+      - name: Checkout core app (temporary: findpatientdev)
+        uses: actions/checkout@v4
+        with:
+          repository: findpatient/findpatientdev
+          path: core
+
+      - name: Copy org config into core app
+        run: |
+          cp org.json core/docs/org.json
+
+      - name: Inject secrets into config (placeholder)
+        run: |
+          echo "// TODO: use secrets to build final config.js" > core/docs/config.js
+          echo "window.FINDPATIENT_ORG_CODE = 'rwf';" >> core/docs/config.js
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: core/docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
