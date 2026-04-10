@@ -24,7 +24,7 @@ jobs:
           echo "window.findpatientConfig = {" > config.js
 
           # Inject public org.json
-          echo "  ...$(echo '${ORG_JSON}' | sed 's/^/  /')," >> config.js
+          echo "  $(cat org.json)," >> config.js
 
           # Inject private secrets
           echo "  secrets: {" >> config.js
@@ -35,6 +35,7 @@ jobs:
           echo "  }" >> config.js
 
           echo "};" >> config.js
+
 
       - name: Upload artifact (config only)
         uses: actions/upload-artifact@v4
