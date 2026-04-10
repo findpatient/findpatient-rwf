@@ -12,6 +12,9 @@ jobs:
       - name: Checkout RWF repo
         uses: actions/checkout@v4
 
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
       - name: Generate config.js
         run: |
           echo "window.findpatientConfig = {" > config.js
@@ -19,12 +22,12 @@ jobs:
           # Insert org.json contents WITHOUT outer braces, add comma at end
           sed '1d;$d' org.json | sed '$s/$/,/' >> config.js
 
-          # Inject private secrets
+          # Inject private secrets (proper JSON)
           echo "  \"secrets\": {" >> config.js
-          echo "    \"urls\": ${{ secrets.ORG_URLS }}," >> config.js
-          echo "    \"status\": ${{ secrets.ORG_STATUS }}," >> config.js
-          echo "    \"features\": ${{ secrets.ORG_FEATURES }}," >> config.js
-          echo "    \"env\": ${{ secrets.ORG_ENV }}" >> config.js
+          echo "    \"urls\": $(echo '${{ secrets.ORG_URLS }}' | jq -c .)," >> config.js
+          echo "    \"status\": $(echo '${{ secrets.ORG_STATUS }}' | jq -c .)," >> config.js
+          echo "    \"features\": $(echo '${{ secrets.ORG_FEATURES }}' | jq -c .)," >> config.js
+          echo "    \"env\": $(echo '${{ secrets.ORG_ENV }}' | jq -c .)" >> config.js
           echo "  }" >> config.js
 
           echo "};" >> config.js
@@ -56,12 +59,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: rwf-config
-          path: core
+          path: .
 
       - name: Prepare deployment folder
         run: |
           mkdir build
           cp -R core/* build/
+          cp config.js build/config.js
 
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
