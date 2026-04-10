@@ -23,8 +23,8 @@ jobs:
         run: |
           echo "window.findpatientConfig = {" > config.js
 
-          # Insert org.json contents directly
-          cat org.json >> config.js
+          # Insert org.json contents directly (no extra braces)
+          sed 's/^/  /' org.json >> config.js
           echo "," >> config.js
 
           # Inject private secrets
@@ -36,6 +36,7 @@ jobs:
           echo "  }" >> config.js
 
           echo "};" >> config.js
+
 
 
 
