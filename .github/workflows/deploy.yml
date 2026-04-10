@@ -7,11 +7,9 @@ on:
 jobs:
   build-config:
     runs-on: ubuntu-latest
-    outputs:
-      config-path: ${{ steps.upload.outputs.artifact-id }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout RWF repo
         uses: actions/checkout@v4
 
       - name: Generate config.js
@@ -23,16 +21,15 @@ jobs:
 
           # Inject private secrets
           echo "  \"secrets\": {" >> config.js
-          echo "    \"urls\": \"${{ secrets.ORG_URLS }}\"," >> config.js
-          echo "    \"status\": \"${{ secrets.ORG_STATUS }}\"," >> config.js
-          echo "    \"features\": \"${{ secrets.ORG_FEATURES }}\"," >> config.js
-          echo "    \"env\": \"${{ secrets.ORG_ENV }}\"" >> config.js
+          echo "    \"urls\": ${{ secrets.ORG_URLS }}," >> config.js
+          echo "    \"status\": ${{ secrets.ORG_STATUS }}," >> config.js
+          echo "    \"features\": ${{ secrets.ORG_FEATURES }}," >> config.js
+          echo "    \"env\": ${{ secrets.ORG_ENV }}" >> config.js
           echo "  }" >> config.js
 
           echo "};" >> config.js
 
       - name: Upload config.js artifact
-        id: upload
         uses: actions/upload-artifact@v4
         with:
           name: rwf-config
@@ -46,19 +43,30 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout RWF repo
         uses: actions/checkout@v4
+
+      - name: Checkout core repo
+        uses: actions/checkout@v4
+        with:
+          repository: findpatient/findpatientdev
+          path: core
 
       - name: Download config.js artifact
         uses: actions/download-artifact@v4
         with:
           name: rwf-config
-          path: .
+          path: core
+
+      - name: Prepare deployment folder
+        run: |
+          mkdir build
+          cp -R core/* build/
 
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: build
 
       - name: Deploy
         uses: actions/deploy-pages@v4
