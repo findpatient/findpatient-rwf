@@ -1,4 +1,4 @@
-name: Build RWF Config
+name: Build and Deploy RWF
 
 on:
   push:
@@ -7,6 +7,8 @@ on:
 jobs:
   build-config:
     runs-on: ubuntu-latest
+    outputs:
+      config-path: ${{ steps.upload.outputs.artifact-id }}
 
     steps:
       - name: Checkout repository
@@ -16,7 +18,7 @@ jobs:
         run: |
           echo "window.findpatientConfig = {" > config.js
 
-          # Insert org.json contents WITHOUT outer braces, and add a comma at the end of the last line
+          # Insert org.json contents WITHOUT outer braces, add comma at end
           sed '1d;$d' org.json | sed '$s/$/,/' >> config.js
 
           # Inject private secrets
@@ -30,7 +32,33 @@ jobs:
           echo "};" >> config.js
 
       - name: Upload config.js artifact
+        id: upload
         uses: actions/upload-artifact@v4
         with:
           name: rwf-config
           path: config.js
+
+  deploy:
+    needs: build-config
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download config.js artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: rwf-config
+          path: .
+
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy
+        uses: actions/deploy-pages@v4
