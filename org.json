@@ -1,8 +1,4 @@
 {
-  "orgCode": "RWF",
-  "orgName": "Maidstone and Tunbridge Wells NHS Trust"
-  "orgName": "Maidstone and Tunbridge Wells NHS Trust",
-  "brandingMode": "nhs",
 
   "sites": {
     "twh": { "name": "Tunbridge Wells", "code": "TWH" },
