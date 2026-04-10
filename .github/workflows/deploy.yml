@@ -12,19 +12,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Read org.json
-        id: orgjson
-        run: |
-          echo "ORG_JSON<<EOF" >> $GITHUB_ENV
-          cat org.json >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
       - name: Generate config.js
         run: |
           echo "window.findpatientConfig = {" > config.js
 
-          # Insert org.json directly (no extra braces, no indentation)
-          cat org.json >> config.js
+          # Insert org.json contents WITHOUT outer braces
+          sed '1d;$d' org.json >> config.js
           echo "," >> config.js
 
           # Inject private secrets
@@ -37,7 +30,7 @@ jobs:
 
           echo "};" >> config.js
 
-      - name: Upload artifact (config only)
+      - name: Upload config.js artifact
         uses: actions/upload-artifact@v4
         with:
           name: rwf-config
