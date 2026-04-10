@@ -1,46 +1,43 @@
-name: Deploy RWF FindPatient
+name: Build RWF Config
 
 on:
   push:
     branches: [ main ]
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 jobs:
-  build-and-deploy:
+  build-config:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout org repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Checkout core app (temporary: findpatientdev)
-        uses: actions/checkout@v4
-        with:
-          repository: findpatient/findpatientdev
-          path: core
-
-      - name: Copy org config into core app
+      - name: Read org.json
+        id: orgjson
         run: |
-          cp org.json core/docs/org.json
+          echo "ORG_JSON<<EOF" >> $GITHUB_ENV
+          cat org.json >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
-      - name: Inject secrets into config (placeholder)
+      - name: Generate config.js
         run: |
-          echo "// TODO: use secrets to build final config.js" > core/docs/config.js
-          echo "window.FINDPATIENT_ORG_CODE = 'rwf';" >> core/docs/config.js
+          echo "window.findpatientConfig = {" > config.js
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+          # Inject public org.json
+          echo "  ...$(echo '${ORG_JSON}' | sed 's/^/  /')," >> config.js
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+          # Inject private secrets
+          echo "  secrets: {" >> config.js
+          echo "    urls: '${{ secrets.ORG_URLS }}'," >> config.js
+          echo "    status: '${{ secrets.ORG_STATUS }}'," >> config.js
+          echo "    features: '${{ secrets.ORG_FEATURES }}'," >> config.js
+          echo "    env: '${{ secrets.ORG_ENV }}'" >> config.js
+          echo "  }" >> config.js
+
+          echo "};" >> config.js
+
+      - name: Upload artifact (config only)
+        uses: actions/upload-artifact@v4
         with:
-          path: core/docs
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
+          name: rwf-config
+          path: config.js
