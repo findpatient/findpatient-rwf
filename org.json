@@ -1,21 +1,85 @@
 {
+  "org": {
+    "name": "Maidstone and Tunbridge Wells NHS Trust",
+    "code": "RWF",
+    "version": "v1.0.0",
+    "appTitle": "ED Downtime Tracking Tool"
+  },
+
+  "branding": {
+    "brandingMode": "nhs",
+
+    "themes": {
+      "findpatient": {
+        "primary": "#005eb8",
+        "secondary": "#003087",
+        "accent": "#41b6e6",
+        "background": "#ffffff",
+        "danger": "#d4351c",
+        "success": "#00703c",
+        "logo": "assets/logo-findpatient.png",
+        "favicon": "assets/favicon-findpatient.ico",
+        "appName": "FindPatient"
+      },
+
+      "nhs": {
+        "primary": "#005eb8",
+        "secondary": "#003087",
+        "accent": "#41b6e6",
+        "background": "#ffffff",
+        "danger": "#d4351c",
+        "success": "#00703c",
+        "logo": "https://assets.nhs.uk/images/nhs-logo.png",
+        "favicon": "assets/favicon-nhs.ico",
+        "appName": "NHS Dashboard"
+      },
+
+      "org": {
+        "primary": "#005eb8",
+        "secondary": "#003087",
+        "accent": "#41b6e6",
+        "background": "#ffffff",
+        "danger": "#d4351c",
+        "success": "#00703c",
+        "logo": "assets/logo-rwf.png",
+        "favicon": "assets/favicon-rwf.ico",
+        "appName": "RWF Dashboard"
+      }
+    }
+  },
+
+  "tools": [
+    { "key": "tracking", "label": "Tracking Board", "enabled": true, "type": "view" },
+    { "key": "addPatient", "label": "Add Patient", "enabled": true, "type": "view" },
+    { "key": "refresh", "label": "Refresh", "enabled": true, "type": "action" }
+  ],
+
+  "toolUrls": {
+    "tracking": "TRACKING_URL_KEY",
+    "addPatient": "ADD_PATIENT_URL_KEY"
+  },
 
   "sites": {
-    "twh": { "name": "Tunbridge Wells", "code": "TWH" },
-    "mgh": { "name": "Maidstone", "code": "MGH" }
+    "twh": {
+      "name": "Tunbridge Wells Hospital",
+      "locations": [
+        { "name": "Whole Dept", "enabled": true }
+      ]
+    },
+    "mgh": {
+      "name": "Maidstone Hospital",
+      "locations": [
+        { "name": "Whole Dept", "enabled": true }
+      ]
+    }
   },
 
   "dashboards": {
-    "tracking": {
-      "name": "Tracking Board",
-      "siteUrls": {
-        "twh": "tracking_twh",
-        "mgh": "tracking_mgh"
-      }
+    "twh": {
+      "Whole Dept": "TRACKING_TWH_URL_KEY"
     },
-    "addpatient": {
-      "name": "Add Patient",
-      "urlKey": "add_patient"
+    "mgh": {
+      "Whole Dept": "TRACKING_MGH_URL_KEY"
     }
   }
 }
