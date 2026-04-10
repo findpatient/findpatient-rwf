@@ -16,8 +16,13 @@ jobs:
         run: |
           echo "window.findpatientConfig = {" > config.js
 
+<<<<<<< HEAD
           # Insert org.json contents WITHOUT outer braces
           sed '1d;$d' org.json >> config.js
+=======
+          # Insert org.json directly (no extra braces, no indentation)
+          cat org.json >> config.js
+>>>>>>> 61f197c7c9f74e65b1814825919e5efca1e323d1
           echo "," >> config.js
 
           # Inject private secrets
@@ -30,7 +35,11 @@ jobs:
 
           echo "};" >> config.js
 
+<<<<<<< HEAD
       - name: Upload config.js artifact
+=======
+      - name: Upload artifact (config only)
+>>>>>>> 61f197c7c9f74e65b1814825919e5efca1e323d1
         uses: actions/upload-artifact@v4
         with:
           name: rwf-config
