@@ -16,9 +16,8 @@ jobs:
         run: |
           echo "window.findpatientConfig = {" > config.js
 
-          # Insert org.json contents WITHOUT outer braces
-          sed '1d;$d' org.json >> config.js
-          echo "," >> config.js
+          # Insert org.json contents WITHOUT outer braces, and add a comma at the end of the last line
+          sed '1d;$d' org.json | sed '$s/$/,/' >> config.js
 
           # Inject private secrets
           echo "  \"secrets\": {" >> config.js
