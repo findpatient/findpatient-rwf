@@ -23,18 +23,20 @@ jobs:
         run: |
           echo "window.findpatientConfig = {" > config.js
 
-          # Inject public org.json
-          echo "  $(cat org.json)," >> config.js
+          # Insert org.json contents directly
+          cat org.json >> config.js
+          echo "," >> config.js
 
           # Inject private secrets
-          echo "  secrets: {" >> config.js
-          echo "    urls: '${{ secrets.ORG_URLS }}'," >> config.js
-          echo "    status: '${{ secrets.ORG_STATUS }}'," >> config.js
-          echo "    features: '${{ secrets.ORG_FEATURES }}'," >> config.js
-          echo "    env: '${{ secrets.ORG_ENV }}'" >> config.js
+          echo "  \"secrets\": {" >> config.js
+          echo "    \"urls\": \"${{ secrets.ORG_URLS }}\"," >> config.js
+          echo "    \"status\": \"${{ secrets.ORG_STATUS }}\"," >> config.js
+          echo "    \"features\": \"${{ secrets.ORG_FEATURES }}\"," >> config.js
+          echo "    \"env\": \"${{ secrets.ORG_ENV }}\"" >> config.js
           echo "  }" >> config.js
 
           echo "};" >> config.js
+
 
 
       - name: Upload artifact (config only)
