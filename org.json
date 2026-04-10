@@ -1,4 +1,25 @@
 {
   "orgCode": "RWF",
   "orgName": "Maidstone and Tunbridge Wells NHS Trust"
+  "orgName": "Maidstone and Tunbridge Wells NHS Trust",
+  "brandingMode": "nhs",
+
+  "sites": {
+    "twh": { "name": "Tunbridge Wells", "code": "TWH" },
+    "mgh": { "name": "Maidstone", "code": "MGH" }
+  },
+
+  "dashboards": {
+    "tracking": {
+      "name": "Tracking Board",
+      "siteUrls": {
+        "twh": "tracking_twh",
+        "mgh": "tracking_mgh"
+      }
+    },
+    "addpatient": {
+      "name": "Add Patient",
+      "urlKey": "add_patient"
+    }
+  }
 }
