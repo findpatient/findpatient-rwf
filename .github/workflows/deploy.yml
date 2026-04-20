@@ -1,0 +1,38 @@
+name: Deploy findpatient
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout deployment repo
+        uses: actions/checkout@v4
+
+      - name: Checkout core repo
+        uses: actions/checkout@v4
+        with:
+          repository: findpatient/findpatientdev
+          token: ${{ secrets.GH_PAT }}
+          path: core
+
+      - name: Copy core /docs into deployment
+        run: |
+          rm -rf docs
+          cp -R core/docs docs
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
